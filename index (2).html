@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Harcademic Tutoring Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #F7F4EE; --warm-white: #FDFCF9; --sand: #EDE8DF; --linen: #E4DDD1;
+      --text-dark: #1C1A17; --text-mid: #5C574E; --text-light: #9C9589;
+      --accent-green: #3D6B4F; --accent-green-light: #D4E8DC;
+      --accent-warm: #C4885A; --accent-warm-light: #F5E6D8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--warm-white); color: var(--text-dark); overflow-x: hidden; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 4rem; background: rgba(253,252,249,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.06); }
+    .nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.35rem; color: var(--text-dark); text-decoration: none; letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--accent-green); }
+    .nav-tabs { display: flex; list-style: none; background: var(--cream); border: 1px solid var(--linen); border-radius: 100px; padding: 4px; gap: 0; }
+    .nav-tabs li button { background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.83rem; font-weight: 500; color: var(--text-light); padding: 0.45rem 1.3rem; border-radius: 100px; transition: all 0.2s; }
+    .nav-tabs li button:hover { color: var(--text-dark); }
+    .nav-tabs li button.active { background: var(--text-dark); color: #fff; }
+    .nav-cta { background: var(--accent-green); color: #fff; font-size: 0.875rem; font-weight: 500; padding: 0.6rem 1.4rem; border-radius: 100px; text-decoration: none; transition: background 0.2s, transform 0.15s; }
+    .nav-cta:hover { background: #2f5440; transform: translateY(-1px); }
+
+    .page { display: none; min-height: 100vh; padding-top: 72px; }
+    .page.active { display: block; }
+
+    .section-tag { display: inline-block; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent-warm); margin-bottom: 0.75rem; }
+    h2 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem,3.5vw,3rem); letter-spacing: -0.03em; line-height: 1.1; color: var(--text-dark); margin-bottom: 1rem; }
+    h2 em { font-style: italic; }
+    .section-sub { font-size: 1.05rem; font-weight: 300; line-height: 1.75; color: var(--text-mid); max-width: 520px; }
+    .btn-primary { background: var(--text-dark); color: #fff; padding: 0.85rem 2rem; border-radius: 100px; font-size: 0.9rem; font-weight: 500; text-decoration: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s, transform 0.15s; display: inline-block; }
+    .btn-primary:hover { background: #333; transform: translateY(-2px); }
+    .btn-secondary { background: transparent; border: 1.5px solid var(--linen); color: var(--text-mid); padding: 0.85rem 2rem; border-radius: 100px; font-size: 0.9rem; font-weight: 500; text-decoration: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s, color 0.2s, transform 0.15s; display: inline-block; }
+    .btn-secondary:hover { border-color: var(--text-dark); color: var(--text-dark); transform: translateY(-2px); }
+
+    .hero { min-height: calc(100vh - 72px); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 5rem 4rem 4rem; gap: 4rem; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 700px; height: 700px; background: radial-gradient(circle, var(--accent-green-light) 0%, transparent 65%); opacity: 0.5; pointer-events: none; }
+    .hero::after { content: ''; position: absolute; bottom: -10%; left: 20%; width: 500px; height: 500px; background: radial-gradient(circle, var(--accent-warm-light) 0%, transparent 65%); opacity: 0.4; pointer-events: none; }
+    .hero-text { position: relative; z-index: 1; }
+    .hero-tag { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--accent-green-light); color: var(--accent-green); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 1.75rem; animation: fadeUp 0.6s ease both; }
+    .hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.8rem,5vw,4.5rem); line-height: 1.08; letter-spacing: -0.03em; color: var(--text-dark); margin-bottom: 1.5rem; animation: fadeUp 0.6s 0.1s ease both; }
+    .hero h1 em { font-style: italic; color: var(--accent-green); }
+    .hero-sub { font-size: 1.1rem; font-weight: 300; line-height: 1.7; color: var(--text-mid); max-width: 460px; margin-bottom: 2.5rem; animation: fadeUp 0.6s 0.2s ease both; }
+    .hero-actions { display: flex; align-items: center; gap: 1.25rem; animation: fadeUp 0.6s 0.3s ease both; }
+    .btn-ghost { color: var(--text-mid); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 0.4rem; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: color 0.2s; }
+    .btn-ghost:hover { color: var(--text-dark); }
+    .btn-ghost svg { transition: transform 0.2s; }
+    .btn-ghost:hover svg { transform: translateX(4px); }
+    .hero-visual { position: relative; z-index: 1; animation: fadeIn 0.8s 0.3s ease both; }
+    .hero-card { background: var(--warm-white); border: 1px solid var(--linen); border-radius: 20px; padding: 1.75rem; box-shadow: 0 4px 40px rgba(0,0,0,0.06); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .card-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-light); }
+    .card-badge { font-size: 0.75rem; font-weight: 500; padding: 0.3rem 0.8rem; border-radius: 100px; background: var(--accent-green-light); color: var(--accent-green); }
+    .subject-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .subject-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1rem; background: var(--cream); border-radius: 12px; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .subject-item:hover { background: var(--sand); transform: translateY(-2px); }
+    .subject-icon { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: var(--warm-white); border-radius: 8px; font-size: 1.1rem; flex-shrink: 0; }
+    .subject-name { font-size: 0.85rem; font-weight: 500; color: var(--text-dark); }
+    .subject-level { font-size: 0.72rem; color: var(--text-light); }
+    .hero-float { position: absolute; bottom: -2rem; right: -2rem; z-index: 1; width: 200px; background: var(--warm-white); border: 1px solid var(--linen); border-radius: 16px; padding: 1.1rem 1.25rem; box-shadow: 0 8px 32px rgba(0,0,0,0.08); animation: floatCard 4s ease-in-out infinite; }
+    @keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .float-stat { font-family: 'DM Serif Display', serif; font-size: 1.8rem; color: var(--text-dark); }
+    .float-label { font-size: 0.75rem; color: var(--text-light); margin-top: 0.15rem; }
+
+    .stats-strip { background: var(--cream); border-top: 1px solid var(--linen); border-bottom: 1px solid var(--linen); padding: 2.5rem 4rem; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 2rem; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: 'DM Serif Display', serif; font-size: 2.5rem; color: var(--text-dark); line-height: 1; }
+    .stat-desc { font-size: 0.85rem; color: var(--text-light); margin-top: 0.3rem; }
+
+    .how { padding: 6rem 4rem; background: var(--cream); }
+    .how-inner { display: grid; grid-template-columns: 1fr 1.5fr; gap: 5rem; align-items: start; max-width: 1200px; margin: 0 auto; }
+    .steps { margin-top: 3rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .step { display: flex; gap: 1.25rem; padding: 1.25rem 1.5rem; border-radius: 16px; cursor: pointer; transition: background 0.2s; }
+    .step:hover, .step.active { background: var(--warm-white); box-shadow: 0 2px 20px rgba(0,0,0,0.05); }
+    .step-num { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--linen); line-height: 1; flex-shrink: 0; transition: color 0.2s; }
+    .step.active .step-num { color: var(--accent-green); }
+    .step-title { font-weight: 500; margin-bottom: 0.3rem; font-size: 0.95rem; }
+    .step-desc { font-size: 0.85rem; color: var(--text-light); line-height: 1.6; }
+    .how-visual { position: sticky; top: 8rem; background: var(--warm-white); border: 1px solid var(--linen); border-radius: 24px; padding: 2.5rem; box-shadow: 0 8px 48px rgba(0,0,0,0.06); }
+    .schedule-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; }
+    .schedule-title { font-family: 'DM Serif Display', serif; font-size: 1.3rem; }
+    .schedule-week { font-size: 0.8rem; color: var(--text-light); }
+    .session-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .session { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; background: var(--cream); border-radius: 12px; }
+    .session-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: var(--accent-green); } .dot-warm { background: var(--accent-warm); } .dot-blue { background: #5B8AC4; }
+    .session-info { flex: 1; }
+    .session-subj { font-size: 0.875rem; font-weight: 500; }
+    .session-time { font-size: 0.75rem; color: var(--text-light); margin-top: 0.1rem; }
+    .session-tutor { font-size: 0.75rem; color: var(--text-light); background: var(--warm-white); padding: 0.25rem 0.6rem; border-radius: 100px; }
+
+    .subjects { padding: 6rem 4rem; }
+    .subjects-inner { max-width: 1200px; margin: 0 auto; }
+    .subjects-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 3.5rem; }
+    .subj-card { border: 1px solid var(--linen); border-radius: 20px; padding: 2rem; background: var(--warm-white); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+    .subj-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+    .subj-emoji { font-size: 2rem; margin-bottom: 1rem; }
+    .subj-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.4rem; }
+    .subj-desc { font-size: 0.83rem; color: var(--text-light); line-height: 1.6; }
+    .subj-footer { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--linen); display: flex; justify-content: space-between; align-items: center; }
+    .subj-count { font-size: 0.78rem; color: var(--text-light); }
+    .subj-arrow { width: 28px; height: 28px; background: var(--cream); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .subj-card:hover .subj-arrow { background: var(--accent-green-light); }
+
+    .about-story { padding: 6rem 4rem; background: var(--cream); }
+    .about-story-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .about-visual-card { background: var(--warm-white); border: 1px solid var(--linen); border-radius: 24px; padding: 2rem; }
+    .mission-stat { text-align: center; padding: 1.5rem; border-bottom: 1px solid var(--linen); }
+    .mission-stat:last-child { border-bottom: none; }
+    .ms-num { font-family: 'DM Serif Display', serif; font-size: 2.5rem; color: var(--accent-green); line-height: 1; }
+    .ms-label { font-size: 0.8rem; color: var(--text-light); margin-top: 0.3rem; }
+
+    .values { padding: 6rem 4rem; }
+    .values-inner { max-width: 1200px; margin: 0 auto; }
+    .values-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem; margin-top: 2.5rem; }
+    .val-card { background: var(--warm-white); border: 1px solid var(--linen); border-radius: 20px; padding: 2rem; }
+    .val-accent { width: 40px; height: 4px; border-radius: 100px; margin-bottom: 1.25rem; }
+    .va-green { background: var(--accent-green); } .va-warm { background: var(--accent-warm); } .va-dark { background: var(--text-dark); } .va-mid { background: var(--text-light); }
+    .val-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; }
+    .val-desc { font-size: 0.85rem; color: var(--text-mid); line-height: 1.65; }
+
+    .team { padding: 6rem 4rem; background: var(--cream); }
+    .team-inner { max-width: 1200px; margin: 0 auto; }
+    .team-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.25rem; margin-top: 2.5rem; }
+    .member-card { background: var(--warm-white); border: 1px solid var(--linen); border-radius: 20px; padding: 1.5rem; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
+    .member-card:hover { transform: translateY(-4px); box-shadow: 0 10px 36px rgba(0,0,0,0.07); }
+    .member-avatar { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: #fff; }
+    .member-name { font-weight: 600; font-size: 0.88rem; margin-bottom: 0.25rem; line-height: 1.3; }
+    .member-role { font-size: 0.72rem; color: var(--text-light); margin-bottom: 0.5rem; }
+    .member-subj { font-size: 0.7rem; font-weight: 600; background: var(--accent-green-light); color: var(--accent-green); padding: 0.25rem 0.65rem; border-radius: 100px; display: inline-block; }
+    .role-teacher { background: var(--accent-warm-light); color: var(--accent-warm); }
+
+    .testimonials { padding: 6rem 4rem; background: var(--text-dark); color: var(--cream); }
+    .testimonials h2 { color: var(--cream); }
+    .testimonials .section-tag { color: var(--accent-warm); }
+    .testimonials .section-sub { color: rgba(255,255,255,0.5); }
+    .quotes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 3.5rem; }
+    .quote-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 2rem; transition: background 0.2s; }
+    .quote-card:hover { background: rgba(255,255,255,0.08); }
+    .quote-stars { color: #F4C44C; font-size: 0.9rem; margin-bottom: 1rem; letter-spacing: 2px; }
+    .quote-text { font-size: 0.9rem; line-height: 1.7; color: rgba(255,255,255,0.75); margin-bottom: 1.5rem; font-style: italic; }
+    .quote-author { display: flex; align-items: center; gap: 0.75rem; }
+    .quote-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--linen); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 600; color: var(--text-dark); }
+    .author-name { font-size: 0.85rem; font-weight: 500; color: var(--cream); }
+    .author-grade { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+
+    .contact-section { padding: 6rem 4rem; background: var(--accent-green); color: #fff; }
+    .contact-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .contact-section h2 { color: #fff; }
+    .contact-section h2 em { color: rgba(255,255,255,0.7); }
+    .contact-section .section-sub { color: rgba(255,255,255,0.75); margin-bottom: 2rem; }
+    .contact-info { display: flex; flex-direction: column; gap: 1rem; }
+    .ci-item { display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 1rem 1.25rem; }
+    .ci-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .ci-label { font-size: 0.72rem; color: rgba(255,255,255,0.55); }
+    .ci-val { font-size: 0.88rem; font-weight: 500; margin-top: 0.1rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .cf-input { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 0.85rem 1.1rem; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: #fff; width: 100%; transition: border-color 0.2s; }
+    .cf-input::placeholder { color: rgba(255,255,255,0.4); }
+    .cf-input:focus { outline: none; border-color: rgba(255,255,255,0.5); }
+    .cf-textarea { resize: vertical; min-height: 100px; }
+    .cf-submit { background: #fff; color: var(--accent-green); border: none; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 600; padding: 0.9rem 2rem; cursor: pointer; transition: background 0.2s, transform 0.15s; align-self: flex-start; }
+    .cf-submit:hover { background: var(--cream); transform: translateY(-2px); }
+
+    .news-hero { background: var(--text-dark); color: var(--cream); padding: 4rem 4rem 3rem; }
+    .news-hero-inner { max-width: 1200px; margin: 0 auto; }
+    .news-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.5rem,4vw,4rem); letter-spacing: -0.03em; margin-top: 0.75rem; margin-bottom: 0.75rem; }
+    .news-hero h1 em { font-style: italic; color: #F4C44C; }
+    .news-hero .section-sub { color: rgba(247,244,238,0.6); }
+    .news-grid { max-width: 1200px; margin: 3rem auto; padding: 0 4rem; display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+    .article-featured { background: var(--warm-white); border: 1px solid var(--linen); border-radius: 24px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .article-featured:hover { transform: translateY(-4px); box-shadow: 0 12px 48px rgba(0,0,0,0.1); }
+    .af-banner { height: 200px; background: linear-gradient(135deg, var(--text-dark) 0%, #3a3530 100%); display: flex; align-items: flex-end; padding: 1.5rem; position: relative; overflow: hidden; }
+    .af-banner::before { content:''; position:absolute; top:-30%; right:-10%; width:250px; height:250px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 65%); }
+    .af-category { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; background: rgba(255,255,255,0.15); padding: 0.3rem 0.7rem; border-radius: 100px; }
+    .af-body { padding: 1.75rem; }
+    .af-date { font-size: 0.75rem; color: var(--text-light); margin-bottom: 0.6rem; }
+    .af-title { font-family: 'DM Serif Display', serif; font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    .af-excerpt { font-size: 0.85rem; color: var(--text-mid); line-height: 1.65; }
+    .af-footer { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--linen); display: flex; justify-content: space-between; align-items: center; }
+    .af-author { font-size: 0.78rem; color: var(--text-light); }
+    .af-read { font-size: 0.78rem; font-weight: 600; color: var(--accent-green); }
+    .news-sidebar { display: flex; flex-direction: column; gap: 1rem; }
+    .article-small { background: var(--warm-white); border: 1px solid var(--linen); border-radius: 16px; padding: 1.25rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .article-small:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.07); }
+    .as-cat { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; color: var(--accent-warm); }
+    .as-cat-green { color: var(--accent-green); }
+    .as-title { font-family: 'DM Serif Display', serif; font-size: 1rem; line-height: 1.25; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+    .as-date { font-size: 0.72rem; color: var(--text-light); }
+    .more-articles { max-width: 1200px; margin: 0 auto 4rem; padding: 0 4rem; display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+    .article-card { background: var(--warm-white); border: 1px solid var(--linen); border-radius: 20px; padding: 1.5rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .article-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+    .ac-color-bar { height: 4px; border-radius: 100px; margin-bottom: 1.25rem; }
+    .bar-green { background: var(--accent-green); } .bar-warm { background: var(--accent-warm); } .bar-dark { background: var(--text-dark); }
+    .ac-cat { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; color: var(--text-light); }
+    .ac-title { font-family: 'DM Serif Display', serif; font-size: 1.1rem; line-height: 1.25; letter-spacing: -0.01em; margin-bottom: 0.6rem; }
+    .ac-excerpt { font-size: 0.82rem; color: var(--text-mid); line-height: 1.6; }
+    .ac-footer { margin-top: 1rem; font-size: 0.72rem; color: var(--text-light); }
+
+    .resources-hero { background: var(--accent-warm); color: #fff; padding: 4rem 4rem 3rem; }
+    .resources-hero-inner { max-width: 1200px; margin: 0 auto; }
+    .resources-hero .section-tag { color: rgba(255,255,255,0.8); }
+    .resources-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.5rem,4vw,3.8rem); letter-spacing: -0.03em; margin-top: 0.75rem; margin-bottom: 0.75rem; color: #fff; }
+    .resources-hero h1 em { font-style: italic; color: rgba(255,255,255,0.7); }
+    .resources-hero .section-sub { color: rgba(255,255,255,0.75); }
+    .resources-filter { max-width: 1200px; margin: 2.5rem auto 0; padding: 0 4rem; display: flex; gap: 0.65rem; flex-wrap: wrap; }
+    .filter-btn { background: var(--warm-white); border: 1px solid var(--linen); border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; color: var(--text-mid); padding: 0.45rem 1.1rem; cursor: pointer; transition: all 0.2s; }
+    .filter-btn:hover, .filter-btn.active { background: var(--accent-green); color: #fff; border-color: var(--accent-green); }
+    .resources-grid { max-width: 1200px; margin: 1.75rem auto; padding: 0 4rem; display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+    .res-card { background: var(--warm-white); border: 1px solid var(--linen); border-radius: 20px; padding: 1.75rem; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+    .res-card:hover { transform: translateY(-4px); box-shadow: 0 10px 36px rgba(0,0,0,0.09); }
+    .res-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.1rem; }
+    .ri-green { background: var(--accent-green-light); } .ri-warm { background: var(--accent-warm-light); } .ri-sand { background: var(--sand); }
+    .res-type { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-light); margin-bottom: 0.4rem; }
+    .res-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .res-desc { font-size: 0.82rem; color: var(--text-mid); line-height: 1.6; }
+    .res-footer { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--linen); display: flex; justify-content: space-between; align-items: center; }
+    .res-subj { font-size: 0.72rem; font-weight: 500; background: var(--cream); color: var(--text-mid); padding: 0.25rem 0.7rem; border-radius: 100px; }
+    .res-action { font-size: 0.78rem; font-weight: 600; color: var(--accent-green); text-decoration: none; }
+    .study-tips { background: var(--text-dark); color: var(--cream); padding: 5rem 4rem; }
+    .study-tips-inner { max-width: 1200px; margin: 0 auto; }
+    .study-tips h2 { color: var(--cream); }
+    .study-tips h2 em { color: #F4C44C; }
+    .tips-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.25rem; margin-top: 2.5rem; }
+    .tip-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1.5rem; }
+    .tip-icon { font-size: 1.5rem; margin-bottom: 0.85rem; }
+    .tip-title { font-weight: 600; font-size: 0.88rem; color: var(--cream); margin-bottom: 0.4rem; }
+    .tip-desc { font-size: 0.8rem; color: rgba(247,244,238,0.5); line-height: 1.6; }
+
+    footer { background: var(--text-dark); color: var(--cream); padding: 3rem 4rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--cream); }
+    .footer-logo span { color: var(--accent-green); }
+    .footer-note { font-size: 0.8rem; color: rgba(255,255,255,0.3); margin-top: 0.3rem; }
+    .footer-links { display: flex; gap: 1.75rem; }
+    .footer-links button { background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: rgba(255,255,255,0.4); transition: color 0.2s; }
+    .footer-links button:hover { color: var(--cream); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; } .nav-tabs { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 3rem 1.5rem; } .hero-visual { display: none; }
+      .stats-strip { padding: 2rem 1.5rem; }
+      .how { padding: 4rem 1.5rem; } .how-inner { grid-template-columns: 1fr; gap: 2rem; } .how-visual { position: static; }
+      .subjects { padding: 3rem 1.5rem; } .subjects-grid { grid-template-columns: 1fr 1fr; }
+      .about-story { padding: 3rem 1.5rem; } .about-story-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .values { padding: 3rem 1.5rem; } .values-grid { grid-template-columns: 1fr; }
+      .team { padding: 3rem 1.5rem; } .team-grid { grid-template-columns: 1fr 1fr; }
+      .testimonials { padding: 3rem 1.5rem; } .quotes-grid { grid-template-columns: 1fr; }
+      .contact-section { padding: 3rem 1.5rem; } .contact-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .news-hero { padding: 3rem 1.5rem; } .news-grid { grid-template-columns: 1fr; padding: 0 1.5rem; }
+      .more-articles { grid-template-columns: 1fr; padding: 0 1.5rem; }
+      .resources-hero { padding: 3rem 1.5rem; } .resources-filter { padding: 0 1.5rem; }
+      .resources-grid { grid-template-columns: 1fr 1fr; padding: 0 1.5rem; }
+      .study-tips { padding: 3rem 1.5rem; } .tips-grid { grid-template-columns: 1fr 1fr; }
+      footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 600px) {
+      .subjects-grid, .resources-grid, .tips-grid, .team-grid { grid-template-columns: 1fr; }
+      .cf-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#"><span>Harc</span>academic</a>
+  <ul class="nav-tabs">
+    <li><button class="active" onclick="showPage('home',this)">Home &amp; About</button></li>
+    <li><button onclick="showPage('news',this)">News &amp; Articles</button></li>
+    <li><button onclick="showPage('resources',this)">Resources</button></li>
+  </ul>
+  <a href="#" class="nav-cta" onclick="showPage('home',null);setTimeout(function(){document.getElementById('join-section').scrollIntoView({behavior:'smooth'})},100);return false;">Join Us &#8594;</a>
+</nav>
+
+<!-- HOME + ABOUT PAGE -->
+<div class="page active" id="page-home">
+
+  <section class="hero">
+    <div class="hero-text">
+      <div class="hero-tag">Free &#183; Student-led &#183; Peer tutoring</div>
+      <h1>Learn better,<br/><em>together.</em></h1>
+      <p class="hero-sub">Harcademic connects students with knowledgeable peers and experienced teachers across every subject. Free sessions, flexible scheduling via Google Meet, and a community that genuinely cares.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('join-section').scrollIntoView({behavior:'smooth'})">Find a Tutor</button>
+        <button class="btn-ghost" onclick="showPage('resources',null)">
+          Browse Resources
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div style="position:relative">
+        <div class="hero-card">
+          <div class="card-header">
+            <span class="card-label">Available now</span>
+            <span class="card-badge">&#9679; 6 sessions open</span>
+          </div>
+          <div class="subject-list">
+            <div class="subject-item"><div class="subject-icon">&#128202;</div><div><div class="subject-name">IGCSE Sociology</div><div class="subject-level">IGCSE</div></div></div>
+            <div class="subject-item"><div class="subject-icon">&#128208;</div><div><div class="subject-name">Add. Maths</div><div class="subject-level">IGCSE</div></div></div>
+            <div class="subject-item"><div class="subject-icon">&#9879;&#65039;</div><div><div class="subject-name">Chemistry</div><div class="subject-level">IGCSE / AS</div></div></div>
+            <div class="subject-item"><div class="subject-icon">&#128218;</div><div><div class="subject-name">English</div><div class="subject-level">All levels</div></div></div>
+          </div>
+        </div>
+        <div class="hero-float">
+          <div class="float-stat">94%</div>
+          <div class="float-label">grade improvement rate</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-strip">
+    <div class="stat-item"><div class="stat-num">80+</div><div class="stat-desc">Students helped so far</div></div>
+    <div class="stat-item"><div class="stat-num">10</div><div class="stat-desc">Tutors on the team</div></div>
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-desc">Subjects covered</div></div>
+    <div class="stat-item"><div class="stat-num">Free</div><div class="stat-desc">Always. No exceptions.</div></div>
+  </div>
+
+  <section class="how">
+    <div class="how-inner">
+      <div>
+        <div class="section-tag">Process</div>
+        <h2>Three steps to <em>clarity</em></h2>
+        <p class="section-sub">Getting help should not be complicated. We made the whole process simple so you can focus on learning.</p>
+        <div class="steps">
+          <div class="step active">
+            <div class="step-num">01</div>
+            <div><div class="step-title">Pick your subject</div><div class="step-desc">Browse available tutors by subject or level. Read their profiles to find the right fit.</div></div>
+          </div>
+          <div class="step">
+            <div class="step-num">02</div>
+            <div><div class="step-title">Book a free session</div><div class="step-desc">All sessions are held on Google Meet, 45 minutes, anytime that works for both you and your tutor.</div></div>
+          </div>
+          <div class="step">
+            <div class="step-num">03</div>
+            <div><div class="step-title">Come prepared, leave confident</div><div class="step-desc">Bring your questions, past papers, or notes. Our tutors meet you where you are, no judgment.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="how-visual">
+        <div class="schedule-header">
+          <div class="schedule-title">Upcoming sessions</div>
+          <div class="schedule-week">Google Meet &#183; 45 min</div>
+        </div>
+        <div class="session-list">
+          <div class="session"><div class="session-dot dot-green"></div><div class="session-info"><div class="session-subj">IGCSE Sociology</div><div class="session-time">Anytime &#183; Google Meet &#183; 45 min</div></div><div class="session-tutor">Tu&#7879; Anh</div></div>
+          <div class="session"><div class="session-dot dot-warm"></div><div class="session-info"><div class="session-subj">IGCSE Additional Maths</div><div class="session-time">Anytime &#183; Google Meet &#183; 45 min</div></div><div class="session-tutor">V&#361; Huy</div></div>
+          <div class="session"><div class="session-dot dot-blue"></div><div class="session-info"><div class="session-subj">IGCSE Chemistry</div><div class="session-time">Anytime &#183; Google Meet &#183; 45 min</div></div><div class="session-tutor">Ms. Linh</div></div>
+          <div class="session"><div class="session-dot dot-green"></div><div class="session-info"><div class="session-subj">English Language</div><div class="session-time">Anytime &#183; Google Meet &#183; 45 min</div></div><div class="session-tutor">Minh Ch&#226;u</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="subjects">
+    <div class="subjects-inner">
+      <div class="section-tag">Subjects</div>
+      <h2>Whatever you are studying,<br/><em>we have got you.</em></h2>
+      <div class="subjects-grid">
+        <div class="subj-card"><div class="subj-emoji">&#128202;</div><div class="subj-title">IGCSE Sociology</div><div class="subj-desc">Key concepts, case studies, essay technique, and Paper 1 &amp; 2 exam strategy.</div><div class="subj-footer"><div class="subj-count">1 tutor available</div><div class="subj-arrow">&#8594;</div></div></div>
+        <div class="subj-card"><div class="subj-emoji">&#128208;</div><div class="subj-title">IGCSE Additional Maths</div><div class="subj-desc">Algebra, calculus, trigonometry, and problem-solving for 0606.</div><div class="subj-footer"><div class="subj-count">2 tutors available</div><div class="subj-arrow">&#8594;</div></div></div>
+        <div class="subj-card"><div class="subj-emoji">&#9879;&#65039;</div><div class="subj-title">IGCSE Chemistry</div><div class="subj-desc">Atomic structure, bonding, reactions, and past paper practice for 0620.</div><div class="subj-footer"><div class="subj-count">2 tutors available</div><div class="subj-arrow">&#8594;</div></div></div>
+        <div class="subj-card"><div class="subj-emoji">&#128218;</div><div class="subj-title">English Language &amp; Lit</div><div class="subj-desc">Reading comprehension, directed writing, essay structure, and language analysis.</div><div class="subj-footer"><div class="subj-count">2 tutors available</div><div class="subj-arrow">&#8594;</div></div></div>
+        <div class="subj-card"><div class="subj-emoji">&#129514;</div><div class="subj-title">IGCSE Biology</div><div class="subj-desc">Cell biology, genetics, ecology, and exam technique for 0610.</div><div class="subj-footer"><div class="subj-count">1 tutor available</div><div class="subj-arrow">&#8594;</div></div></div>
+        <div class="subj-card"><div class="subj-emoji">&#127759;</div><div class="subj-title">IGCSE Geography</div><div class="subj-desc">Physical and human geography, case studies, and fieldwork preparation.</div><div class="subj-footer"><div class="subj-count">1 tutor available</div><div class="subj-arrow">&#8594;</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-story">
+    <div class="about-story-inner">
+      <div>
+        <div class="section-tag">Our story</div>
+        <h2>Built by students,<br/><em>for students.</em></h2>
+        <p class="section-sub">Harcademic was founded by students who realized the biggest barrier to getting help was not ability, it was access. We built a free, peer-run solution that brings student tutors and experienced teachers together in one place.</p>
+        <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap">
+          <button class="btn-primary" onclick="document.getElementById('join-section').scrollIntoView({behavior:'smooth'})">Get in touch</button>
+          <button class="btn-secondary" onclick="showPage('resources',null)">See resources</button>
+        </div>
+      </div>
+      <div class="about-visual-card">
+        <div class="mission-stat"><div class="ms-num">2024</div><div class="ms-label">Year founded</div></div>
+        <div class="mission-stat"><div class="ms-num">10+</div><div class="ms-label">Tutors on the team</div></div>
+        <div class="mission-stat"><div class="ms-num">80+</div><div class="ms-label">Total students helped</div></div>
+        <div class="mission-stat"><div class="ms-num">$0</div><div class="ms-label">Cost to any student, ever</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="values">
+    <div class="values-inner">
+      <div class="section-tag">What we stand for</div>
+      <h2>Our <em>values</em></h2>
+      <div class="values-grid">
+        <div class="val-card"><div class="val-accent va-green"></div><div class="val-title">Accessibility first</div><div class="val-desc">Academic help should never depend on what your family can afford. Every session we offer is completely free, no strings attached.</div></div>
+        <div class="val-card"><div class="val-accent va-warm"></div><div class="val-title">Peer understanding</div><div class="val-desc">Students who recently learned something often explain it better than anyone. Our student tutors get it because they have been there.</div></div>
+        <div class="val-card"><div class="val-accent va-dark"></div><div class="val-title">No judgment</div><div class="val-desc">Asking for help is brave. We create a space where no question is too basic and no student feels embarrassed for not knowing something yet.</div></div>
+        <div class="val-card"><div class="val-accent va-mid"></div><div class="val-title">Expert guidance</div><div class="val-desc">Alongside our student tutors, our teacher tutors bring years of classroom experience to give students the depth they need for exams.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="team">
+    <div class="team-inner">
+      <div class="section-tag">The team</div>
+      <h2>Meet our <em>tutors</em></h2>
+      <div class="team-grid">
+        <div class="member-card">
+          <div class="member-avatar" style="background:#3D6B4F">T</div>
+          <div class="member-name">Nguy&#7877;n Tu&#7879; Anh</div>
+          <div class="member-role">Student Tutor &#183; Co-founder</div>
+          <div class="member-subj">IGCSE Sociology</div>
+        </div>
+        <div class="member-card">
+          <div class="member-avatar" style="background:#5B8AC4">V</div>
+          <div class="member-name">Nguy&#7877;n V&#361; Huy</div>
+          <div class="member-role">Student Tutor &#183; Co-founder</div>
+          <div class="member-subj">IGCSE Add. Maths &amp; more</div>
+        </div>
+        <div class="member-card">
+          <div class="member-avatar" style="background:#C4885A">L</div>
+          <div class="member-name">Ms. Ng&#244; Th&#7883; Linh</div>
+          <div class="member-role">Teacher Tutor</div>
+          <div class="member-subj role-teacher">IGCSE Chemistry</div>
+        </div>
+        <div class="member-card">
+          <div class="member-avatar" style="background:#7A5FA0">M</div>
+          <div class="member-name">Tr&#7847;n Minh Ch&#226;u</div>
+          <div class="member-role">Student Tutor</div>
+          <div class="member-subj">English Language</div>
+        </div>
+        <div class="member-card">
+          <div class="member-avatar" style="background:#4A7C8E">P</div>
+          <div class="member-name">Mr. Ph&#7841;m &#272;&#7913;c Anh</div>
+          <div class="member-role">Teacher Tutor</div>
+          <div class="member-subj role-teacher">IGCSE Biology</div>
+        </div>
+        <div class="member-card">
+          <div class="member-avatar" style="background:#7A6B4E">H</div>
+          <div class="member-name">L&#234; Ho&#224;ng Minh</div>
+          <div class="member-role">Student Tutor</div>
+          <div class="member-subj">IGCSE Physics</div>
+        </div>
+        <div class="member-card">
+          <div class="member-avatar" style="background:#B85C5C">A</div>
+          <div class="member-name">Ms. &#272;inh Thu H&#224;</div>
+          <div class="member-role">Teacher Tutor</div>
+          <div class="member-subj role-teacher">IGCSE Geography</div>
+        </div>
+        <div class="member-card">
+          <div class="member-avatar" style="background:#6B8E6B">K</div>
+          <div class="member-name">V&#245; Kh&#225;nh Linh</div>
+          <div class="member-role">Student Tutor</div>
+          <div class="member-subj">IGCSE Add. Maths</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials">
+    <div class="section-tag">Student stories</div>
+    <h2>Real results, real <em>people.</em></h2>
+    <p class="section-sub">Hear directly from students who came in struggling and left with confidence.</p>
+    <div class="quotes-grid">
+      <div class="quote-card">
+        <div class="quote-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="quote-text">"I was completely lost with IGCSE Sociology essay structure. After two sessions I finally understood how to apply concepts to case studies. Went from a D to a B on my mock."</p>
+        <div class="quote-author"><div class="quote-avatar">N</div><div><div class="author-name">Ng&#7885;c H&#226;n</div><div class="author-grade">Year 11 &#183; IGCSE Sociology</div></div></div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="quote-text">"V&#361; Huy explained Additional Maths in a way my teacher never could. He goes step by step and checks if you understand before moving on. Genuinely the best tutor."</p>
+        <div class="quote-author"><div class="quote-avatar">T</div><div><div class="author-name">Thanh T&#249;ng</div><div class="author-grade">Year 10 &#183; IGCSE Add. Maths</div></div></div>
+      </div>
+      <div class="quote-card">
+        <div class="quote-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="quote-text">"The Google Meet format is so convenient. I can book a session whenever I have a free 45 minutes and do not have to travel anywhere. Best study resource at school."</p>
+        <div class="quote-author"><div class="quote-avatar">P</div><div><div class="author-name">Ph&#432;&#417;ng Anh</div><div class="author-grade">Year 11 &#183; IGCSE Chemistry</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-section" id="join-section">
+    <div class="contact-inner">
+      <div>
+        <div class="section-tag" style="color:rgba(255,255,255,0.7)">Get in touch</div>
+        <h2>Ready to start your <em>journey?</em></h2>
+        <p class="section-sub">Whether you need a tutor, want to become one, or just have a question, we would love to hear from you.</p>
+        <div class="contact-info">
+          <div class="ci-item"><div class="ci-icon">&#128187;</div><div><div class="ci-label">Platform</div><div class="ci-val">Google Meet</div></div></div>
+          <div class="ci-item"><div class="ci-icon">&#128336;</div><div><div class="ci-label">Session length</div><div class="ci-val">45 minutes</div></div></div>
+          <div class="ci-item"><div class="ci-icon">&#128197;</div><div><div class="ci-label">Availability</div><div class="ci-val">Anytime, flexible scheduling</div></div></div>
+          <div class="ci-item"><div class="ci-icon">&#9993;&#65039;</div><div><div class="ci-label">Email</div><div class="ci-val">harcademic@school.edu</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="contact-form">
+          <div class="cf-row">
+            <input class="cf-input" type="text" placeholder="Your name"/>
+            <input class="cf-input" type="text" placeholder="Year level"/>
+          </div>
+          <input class="cf-input" type="email" placeholder="Email address"/>
+          <input class="cf-input" type="text" placeholder="Subject you need help with"/>
+          <textarea class="cf-input cf-textarea" placeholder="Tell us a bit about what you are struggling with..."></textarea>
+          <button class="cf-submit">Send Message &#8594;</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- NEWS PAGE -->
+<div class="page" id="page-news">
+  <div class="news-hero">
+    <div class="news-hero-inner">
+      <div class="section-tag" style="color:#F4C44C">Latest updates</div>
+      <h1>News &amp; <em>Articles</em></h1>
+      <p class="section-sub">Study tips, club announcements, academic resources, and stories from our tutoring community.</p>
+    </div>
+  </div>
+  <div class="news-grid">
+    <div class="article-featured">
+      <div class="af-banner"><span class="af-category">Club Announcement</span></div>
+      <div class="af-body">
+        <div class="af-date">March 1, 2026</div>
+        <div class="af-title">Harcademic Is Now Open, Book Your First Session</div>
+        <p class="af-excerpt">We are thrilled to announce that Harcademic is officially up and running. Our first cohort of tutors covers IGCSE Sociology, Additional Maths, Chemistry, English, Biology, and Geography. All sessions are free, 45 minutes, via Google Meet, and you can book anytime.</p>
+        <div class="af-footer"><span class="af-author">By the Harcademic Team</span><span class="af-read">Read more &#8594;</span></div>
+      </div>
+    </div>
+    <div class="news-sidebar">
+      <div class="article-small"><div class="as-cat">Study Tips</div><div class="as-title">How to Revise for IGCSE Exams Without Burning Out</div><div class="as-date">Feb 22, 2026</div></div>
+      <div class="article-small"><div class="as-cat as-cat-green">Resources</div><div class="as-title">The Best Free Tools for IGCSE Maths Practice</div><div class="as-date">Feb 15, 2026</div></div>
+      <div class="article-small"><div class="as-cat">Club News</div><div class="as-title">Two New Teacher Tutors Join the Harcademic Team</div><div class="as-date">Feb 8, 2026</div></div>
+    </div>
+  </div>
+  <div class="more-articles">
+    <div class="article-card"><div class="ac-color-bar bar-green"></div><div class="ac-cat">Study Strategy</div><div class="ac-title">The Pomodoro Technique: Does It Actually Work for IGCSE?</div><p class="ac-excerpt">We tested the popular time-management method with students across different subjects. Here is what the data showed.</p><div class="ac-footer">Feb 5, 2026 &#183; 4 min read</div></div>
+    <div class="article-card"><div class="ac-color-bar bar-warm"></div><div class="ac-cat">Exam Prep</div><div class="ac-title">How to Write a Sociology Essay That Actually Scores</div><p class="ac-excerpt">Our sociology tutor shares the most common mistakes students make in Paper 2 and exactly how to avoid them.</p><div class="ac-footer">Jan 28, 2026 &#183; 6 min read</div></div>
+    <div class="article-card"><div class="ac-color-bar bar-dark"></div><div class="ac-cat">Peer Advice</div><div class="ac-title">What I Wish I Knew Before Taking IGCSE Additional Maths</div><p class="ac-excerpt">Nguy&#7877;n V&#361; Huy reflects on the biggest surprises of 0606 and how to prepare from day one.</p><div class="ac-footer">Jan 20, 2026 &#183; 5 min read</div></div>
+  </div>
+</div>
+
+<!-- RESOURCES PAGE -->
+<div class="page" id="page-resources">
+  <div class="resources-hero">
+    <div class="resources-hero-inner">
+      <div class="section-tag">Free for all students</div>
+      <h1>Study <em>Resources</em></h1>
+      <p class="section-sub">Past papers, revision guides, video links, and cheat sheets curated by our tutors, all free, all organized by subject.</p>
+    </div>
+  </div>
+  <div class="resources-filter">
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">Add. Maths</button>
+    <button class="filter-btn">Sociology</button>
+    <button class="filter-btn">Chemistry</button>
+    <button class="filter-btn">English</button>
+    <button class="filter-btn">Biology</button>
+    <button class="filter-btn">Geography</button>
+  </div>
+  <div class="resources-grid">
+    <div class="res-card"><div class="res-icon ri-green">&#128196;</div><div class="res-type">PDF Cheat Sheet</div><div class="res-title">Add. Maths Formula Sheet</div><div class="res-desc">All key formulas for 0606, algebra, calculus, trigonometry, in one clean printable sheet.</div><div class="res-footer"><span class="res-subj">Add. Maths</span><a class="res-action" href="#">Download &#8594;</a></div></div>
+    <div class="res-card"><div class="res-icon ri-warm">&#128203;</div><div class="res-type">Essay Framework</div><div class="res-title">Sociology Essay Structure Guide</div><div class="res-desc">A step-by-step framework for Paper 2 essays with point, concept, evidence, evaluation and examples.</div><div class="res-footer"><span class="res-subj">Sociology</span><a class="res-action" href="#">Download &#8594;</a></div></div>
+    <div class="res-card"><div class="res-icon ri-green">&#127909;</div><div class="res-type">Video Playlist</div><div class="res-title">IGCSE Chemistry: Key Reactions</div><div class="res-desc">Curated playlist of 10 short videos covering the most-tested reactions and mechanisms in 0620.</div><div class="res-footer"><span class="res-subj">Chemistry</span><a class="res-action" href="#">Watch &#8594;</a></div></div>
+    <div class="res-card"><div class="res-icon ri-sand">&#128202;</div><div class="res-type">Practice Set</div><div class="res-title">Add. Maths: Calculus Problem Set</div><div class="res-desc">30 differentiation and integration problems with worked solutions, perfect for Paper 2 prep.</div><div class="res-footer"><span class="res-subj">Add. Maths</span><a class="res-action" href="#">Download &#8594;</a></div></div>
+    <div class="res-card"><div class="res-icon ri-warm">&#9999;&#65039;</div><div class="res-type">Writing Guide</div><div class="res-title">IGCSE English: Directed Writing Tips</div><div class="res-desc">How to approach directed writing tasks, format, tone, register, and common mistakes to avoid.</div><div class="res-footer"><span class="res-subj">English</span><a class="res-action" href="#">Download &#8594;</a></div></div>
+    <div class="res-card"><div class="res-icon ri-green">&#128506;&#65039;</div><div class="res-type">Case Study Pack</div><div class="res-title">Sociology Key Case Studies (2025)</div><div class="res-desc">All major sociological studies and theorists for Paper 1 and 2, clearly summarized and organized.</div><div class="res-footer"><span class="res-subj">Sociology</span><a class="res-action" href="#">Download &#8594;</a></div></div>
+  </div>
+  <div class="study-tips">
+    <div class="study-tips-inner">
+      <div class="section-tag" style="color:#F4C44C">Advice from tutors</div>
+      <h2>Study smarter, <em>not harder.</em></h2>
+      <div class="tips-grid">
+        <div class="tip-card"><div class="tip-icon">&#129504;</div><div class="tip-title">Spaced repetition</div><div class="tip-desc">Review material at increasing intervals rather than cramming the night before. Anki makes this effortless.</div></div>
+        <div class="tip-card"><div class="tip-icon">&#9999;&#65039;</div><div class="tip-title">Teach it back</div><div class="tip-desc">Explain a concept out loud as if teaching someone else. If you cannot, you have not learned it yet.</div></div>
+        <div class="tip-card"><div class="tip-icon">&#128245;</div><div class="tip-title">Single-tasking</div><div class="tip-desc">One subject per session. Phone in another room. 45 focused minutes beats three distracted hours.</div></div>
+        <div class="tip-card"><div class="tip-icon">&#10067;</div><div class="tip-title">Ask early</div><div class="tip-desc">Do not wait until the night before your mock. Confusion compounds, address it in the first week.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <div class="footer-logo"><span>Harc</span>academic Tutoring Club</div>
+    <div class="footer-note">Google Meet &#183; 45 minutes &#183; Anytime</div>
+  </div>
+  <div class="footer-links">
+    <button onclick="showPage('home',null)">Home &amp; About</button>
+    <button onclick="showPage('news',null)">News</button>
+    <button onclick="showPage('resources',null)">Resources</button>
+    <button onclick="showPage('home',null);setTimeout(function(){document.getElementById('join-section').scrollIntoView({behavior:'smooth'})},100)">Join Us</button>
+  </div>
+  <div class="footer-note">&#169; 2026 Harcademic Tutoring Club</div>
+</footer>
+
+<script>
+  function showPage(name, btn) {
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById('page-' + name).classList.add('active');
+    document.querySelectorAll('.nav-tabs button').forEach(function(b){ b.classList.remove('active'); });
+    if (btn) {
+      btn.classList.add('active');
+    } else {
+      document.querySelectorAll('.nav-tabs button').forEach(function(b){
+        var t = b.textContent.toLowerCase();
+        if (name === 'home' && t.indexOf('home') > -1) b.classList.add('active');
+        if (name === 'news' && t.indexOf('news') > -1) b.classList.add('active');
+        if (name === 'resources' && t.indexOf('resource') > -1) b.classList.add('active');
+      });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.querySelectorAll('.step').forEach(function(step){
+    step.addEventListener('click', function(){
+      document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+      step.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.filter-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+    });
+  });
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.subj-card,.quote-card,.session,.member-card,.val-card,.res-card,.article-card,.article-small,.tip-card').forEach(function(el){
+    el.style.opacity='0'; el.style.transform='translateY(24px)';
+    el.style.transition='opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
